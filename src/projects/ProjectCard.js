@@ -1,4 +1,4 @@
-import {Project} from "./Project";
+import { Project } from "./Project";
 import PropTypes from "prop-types";
 import React from "react";
 
@@ -6,8 +6,7 @@ function formatDescription(desc) {
     return desc.substring(0, 60) + "...";
 }
 
-function ProjectCard(props) {
-    const {project, onEdit} = props;
+function ProjectCard({ project, onEdit }) {
     const handleEditClick = (projectBeingEdited) => {
         onEdit(projectBeingEdited);
     }
