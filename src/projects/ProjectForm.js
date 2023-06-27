@@ -9,6 +9,7 @@ function ProjectForm({project: initialProject, onSave, onCancel}) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        if (!isValid()) return;
         onSave(project);
     };
 
@@ -27,6 +28,7 @@ function ProjectForm({project: initialProject, onSave, onCancel}) {
             updatedProject = new Project({ ...prevProject, ...change });
             return updatedProject;
         });
+        SetError(() => validateForm(updatedProject));
     };
 
     function validateForm(project) {
@@ -46,6 +48,10 @@ function ProjectForm({project: initialProject, onSave, onCancel}) {
         <label htmlFor="name">Project Name</label>
         <input type="text" name="name" placeholder="enter name" 
         value={project.name} onChange={handleChange}/>
+        {error.name.length > 0 && (<div className="card error">
+            <p>{error.name}</p>    
+        </div>
+        )}
 
         <label htmlFor="description">Project Description</label>
         <textarea name="description" placeholder="enter description" 
