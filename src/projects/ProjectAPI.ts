@@ -1,9 +1,10 @@
 import { Project } from "./Project";
+import ProjectsPage from "./ProjectsPage";
 
 const baseUrl = "http://localhost:4000";
 const url = `${baseUrl}/projects`;
 
-function translateStatustoErrorMessage(status) {
+function translateStatustoErrorMessage(status: number) {
     switch(status) {
         case 401:
             return "Please login again.";
@@ -14,7 +15,7 @@ function translateStatustoErrorMessage(status) {
     }
 }
 
-function checkStatus(response) {
+function checkStatus(response: any) {
     if (response.ok) {
         return response;
     } else {
@@ -29,14 +30,23 @@ function checkStatus(response) {
     }
 }
 
-function parseJSON(response) { 
+function parseJSON(response: Response) { 
     return response.json();
 }
 
-function delay(ms) {
-    return function(x) {
-        return new Promise((resolve) => setTimeout(()=>resolve(x), ms));
+function delay(ms: number) {
+    return function(x: any) {
+        return new Promise<any>((resolve) => setTimeout(()=>resolve(x), ms));
     };
+}
+
+function convertToProjectModels(data: any[]): Project[] {
+    let projects: Project[] = data.map(convertToProjectModel);
+    return projects;
+}
+
+function convertToProjectModel(item: any): Project {
+    return new Project(item);
 }
 
 const projectAPI = {
@@ -45,17 +55,13 @@ const projectAPI = {
             .then(delay(600))
             .then(checkStatus)
             .then(parseJSON)
-            .then((projects) => {
-                return projects.map((p) => {
-                    return new Project(p);
-                });
-            })
-            .catch((error) => {
+            .then(convertToProjectModels)
+            .catch((error: TypeError) => {
                 console.log(error);
                 throw new Error("There was a problem getting the projects.");
             });
     },
-    put(project) {
+    put(project: Project) {
         return fetch (`${url}/${project.id}`, {
             method: "PUT",
             body: JSON.stringify(project),
@@ -69,6 +75,12 @@ const projectAPI = {
             console.log(error);
             throw new Error("There was a problem getting the projects.");
         });
+    },
+    find(id: number) {
+        return fetch (`${url}/${id}`)
+        .then(checkStatus)
+        .then(parseJSON)
+        .then(convertToProjectModel);
     },
 };
 

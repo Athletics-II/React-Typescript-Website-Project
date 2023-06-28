@@ -5,9 +5,9 @@ import ProjectList from './ProjectList';
 import { Project } from './Project';
 
 function ProjectsPage() {
-    const [projects, setProjects] = useState([]);
+    const [projects, setProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const handleMoreClick = () => {
         setCurrentPage((currentPage) => currentPage + 1);
@@ -24,7 +24,9 @@ function ProjectsPage() {
                     setProjects([...projects, ...data]);
                 }
             } catch (e) {
-                setError(e.message);
+                if (e instanceof Error) {
+                    setError(e.message);
+                }
             } finally {
                 setLoading(false);
             }
@@ -32,7 +34,7 @@ function ProjectsPage() {
         loadProjects();
     }, [currentPage]);
 
-    const saveProject = (project) => {
+    const saveProject = (project: Project) => {
         projectAPI.put(project)
         .then((updatedProject) => {
             let updatedProjects = projects.map((p) => {
