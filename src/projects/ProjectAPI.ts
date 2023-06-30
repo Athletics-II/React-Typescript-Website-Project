@@ -1,5 +1,4 @@
 import { Project } from "./Project";
-import ProjectsPage from "./ProjectsPage";
 
 const baseUrl = "http://localhost:4000";
 const url = `${baseUrl}/projects`;
@@ -25,7 +24,7 @@ function checkStatus(response: any) {
             url: response.url
         };
         console.log(`httpError: ${JSON.stringify(httpError)}`);
-        let errorMessage = translateStatustoErrorMessage(response.status);
+        let errorMessage = translateStatustoErrorMessage(httpError.status);
         throw new Error(errorMessage);
     }
 }
@@ -35,8 +34,8 @@ function parseJSON(response: Response) {
 }
 
 function delay(ms: number) {
-    return function(x: any) {
-        return new Promise<any>((resolve) => setTimeout(()=>resolve(x), ms));
+    return function(x: any): Promise<any> {
+        return new Promise((resolve) => setTimeout(()=>resolve(x), ms));
     };
 }
 
@@ -58,7 +57,7 @@ const projectAPI = {
             .then(convertToProjectModels)
             .catch((error: TypeError) => {
                 console.log(error);
-                throw new Error("There was a problem getting the projects.");
+                throw new Error("There was a problem loading the projects.");
             });
     },
     put(project: Project) {
@@ -71,9 +70,9 @@ const projectAPI = {
         })
         .then(checkStatus)
         .then(parseJSON)
-        .catch((error) => {
+        .catch((error: TypeError) => {
             console.log(error);
-            throw new Error("There was a problem getting the projects.");
+            throw new Error("There was a problem putting the projects.");
         });
     },
     find(id: number) {

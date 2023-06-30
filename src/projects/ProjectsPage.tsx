@@ -21,7 +21,7 @@ function ProjectsPage() {
                 if (currentPage === 1) {
                     setProjects(data);
                 } else {
-                    setProjects([...projects, ...data]);
+                    setProjects((projects) => [...projects, ...data]);
                 }
             } catch (e) {
                 if (e instanceof Error) {
